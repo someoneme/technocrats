@@ -1,27 +1,15 @@
 #include <string.h>
-int r_clock=0;
-int k=0;
-int r_anticlock=0;
-int l_clock=0;
-int l_anticlock=0;
-int pin_r_a=0;
-int pin_r_b=0;
-int pin_l_a=0;
-int pin_l_b=0;
-int last_stage_r;
-int last_stage_l;
-int state;
-//String pos[500];
-String record[100];
+int r_clock=0,r_anticlock=0;
+int l_clock=0,l_anticlock=0;
+int pin_r_a=0,pin_r_b=0;
+int pin_l_a=0,pin_l_b=0;
+int last_stage_r,last_stage_l;
 void setup(){
   pinMode(5,OUTPUT);
   pinMode(6,OUTPUT); 
-  Serial.begin(9600);
-
-  int pin_r_a = digitalRead(5);
-  int pin_r_b = digitalRead(6);
-  int pin_l_a = digitalRead(7);
-  int pin_l_b = digitalRead(8);  
+  pinMode(7,OUTPUT);
+  pinMode(8,OUTPUT);
+  Serial.begin(9600);  
 }
 
 void loop(){
@@ -29,59 +17,36 @@ void loop(){
   pin_r_b = digitalRead(6);
   pin_l_a = digitalRead(7);
   pin_l_b = digitalRead(8);
-  int right_val=right()
+  int right_val=move(pin_r_a,pin_r_b,last_stage_r,r_clock,r_anticlock);
+  int left_val=move(pin_l_a,pin_l_b,last_stage_l,l_clock,l_anticlock);
+  if(right_val+left_val==0)
+    Serial.println("Forward");
+  else if(right_val+left_val==30)
+    Serial.println("Right");
+  else if (right_val+left_val==-30)
+    Serial.println("left");
 }
 
-
-char right(){
-  if(pin_r_a!=last_stage_r){
-    if(pin_r_b!=pin_r_a){
-      r_clock++;
-      last_stage_r = pin_r_a;
-      return 1;
-    } 
-    else{
-      r_anticlock++; 
-      last_stage_r = pin_r_a;
-      return 10;
-    }
-  }
-  last_stage_r = pin_r_a; 
-  return 100;
-}
-
-
-char left(){
-  if(pin_l_a!=last_stage_l){
-    if(pin_l_b!=pin_l_a){
-      l_clock++;
-      last_stage_l = pin_l_a;
-      return 2;
-    } 
-    else{
-      l_anticlock++; 
-      last_stage_l = pin_l_a;
-      return 20;
-    }
-  }
-  last_stage_l = pin_l_a; 
-  return 200;
-}
-
-char move(int a,int b,int last,int clock,int anticlock){
-  if(a!=last)
+int move(int a,int b,int last,int clock,int anticlock){
+  if(a!=last){
     if(b!=a){
       clock++;
-      last = a;
-      return 2;
+      //last = a;
+      //return 2;
     } 
     else{
       anticlock++; 
-      last = a;
-      return 20;
+      //last = a;
+      //return 20;
     }
   }
   last = a; 
-  return 200;
+  //return 200;
+  if(clock==30)
+    return clock;
+  else if(anticlock==30)
+    return -anticlock;
+  else
+    return 200;
 }
 
