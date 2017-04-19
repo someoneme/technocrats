@@ -19,12 +19,18 @@ void loop(){
   pin_l_b = digitalRead(8);
   int right_val=move(pin_r_a,pin_r_b,last_stage_r,r_clock,r_anticlock);
   int left_val=move(pin_l_a,pin_l_b,last_stage_l,l_clock,l_anticlock);
-  if(right_val+left_val==0)
+  if(right_val+left_val==0){
     Serial.println("Forward");
-  else if(right_val+left_val==30)
+    reset();
+  }
+  else if(right_val+left_val==30){
     Serial.println("Right");
-  else if (right_val+left_val==-30)
+    reset();
+  }
+  else if (right_val+left_val==-30){
     Serial.println("left");
+    reset();
+  }
 }
 
 int move(int a,int b,int last,int clock,int anticlock){
@@ -49,4 +55,9 @@ int move(int a,int b,int last,int clock,int anticlock){
   else
     return 200;
 }
-
+void reset(){
+  r_clock=0;
+  r_anticlock=0;
+  l_clock=0;
+  l_anticlock=0;
+}
